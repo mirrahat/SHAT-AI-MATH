@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<title>SHSAT MATH Question Generator</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<style>
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: "Segoe UI", sans-serif;
+			background-color: #f8f9fa;
+			color: #333;
+			max-width: 1000px;
+			margin: 0 auto;
+			padding: 0 20px 30px;
+		}
+
+		h1 {
+			text-align: center;
+			margin-top: 20px;
+			color: #2c3e50;
+			font-size: 2rem;
+		}
+
+		.developer-info {
+			text-align: center;
+			font-size: 1.1rem;
+			margin-top: 10px;
+			color: #555;
+		}
+
+		.tabs {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: space-around;
+			background-color: white;
+			border-bottom: 2px solid #ddd;
+			margin-top: 20px;
+			border-radius: 6px 6px 0 0;
+			overflow: hidden;
+		}
+
+		.tab-button {
+			flex: 1;
+			min-width: 120px;
+			text-align: center;
+			padding: 14px 10px;
+			background: none;
+			border: none;
+			cursor: pointer;
+			font-weight: 600;
+			color: #555;
+			font-size: 15px;
+			transition: all 0.3s ease;
+			border-bottom: 3px solid transparent;
+		}
+
+		.tab-button:hover {
+			background-color: #eeeeee;
+			color: #111;
+		}
+
+		.tab-button.active {
+			color: #333;
+			background-color: #f5f5f5;
+			border-bottom: 3px solid #f5f5f5;
+		}
+
+		.tab-content {
+			display: none;
+			padding: 25px 20px;
+			margin-top: 0;
+			background: white;
+			border-radius: 0 0 10px 10px;
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+		}
+
+		.tab-content.active {
+			display: block;
+		}
+
+		textarea, button {
+			width: 100%;
+			padding: 12px;
+			margin-top: 10px;
+			margin-bottom: 20px;
+			font-size: 16px;
+			border: 1px solid #ccc;
+			border-radius: 6px;
+		}
+
+		button {
+			background-color: #007bff;
+			color: white;
+			border: none;
+			font-weight: bold;
+			cursor: pointer;
+			transition: background-color 0.3s, transform 0.2s ease;
+		}
+
+		button:hover {
+			background-color: #0056b3;
+			transform: translateY(-1px);
+			box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+		}
+
+		pre {
+			background-color: #f0f0f0;
+			padding: 10px;
+			border-radius: 5px;
+			white-space: pre-wrap;
+			word-wrap: break-word;
+		}
+
+		ul {
+			padding-left: 20px;
+		}
+
+		.footer {
+			text-align: center;
+			margin-top: 40px;
+			font-size: 14px;
+			color: #777;
+		}
+
+		.footer a {
+			color: #007bff;
+			text-decoration: none;
+			margin: 0 10px;
+		}
+
+		@media screen and (max-width: 600px) {
+			h1 {
+				font-size: 1.5rem;
+			}
+
+			.tab-button {
+				font-size: 14px;
+				padding: 10px 8px;
+			}
+
+			.tabs {
+				flex-direction: column;
+				align-items: stretch;
+			}
+
+			.tab-button {
+				border-bottom: 1px solid #ddd;
+			}
+
+			.tab-button.active {
+				border-bottom: 3px solid #333;
+			}
+		}
+	</style>
+</head>
+<body>
+
+	<h1>SHSAT MATH Question Generator</h1>
+	<div class="developer-info">
+		<p>Developed by <strong>Mir Hasibul Hasan Rahat</strong></p>
+	</div>
+
+	<!-- Tabs Navigation -->
+	<div class="tabs">
+		<button class="tab-button active" onclick="showTab(event, 'generate')">Generate</button>
+		<button class="tab-button" onclick="showTab(event, 'overview')">Overview</button>
+		<button class="tab-button" onclick="showTab(event, 'model')">Model</button>
+		<button class="tab-button" onclick="showTab(event, 'sample')">Sample Input</button>
+		<button class="tab-button" onclick="showTab(event, 'how')">How It Works</button>
+		<button class="tab-button" onclick="showTab(event, 'future')">Future</button>
+		<button class="tab-button" onclick="showTab(event, 'limitations')">Limitations</button>
+		<button class="tab-button" onclick="showTab(event, 'developer')">About me</button>
+	</div>
+
+	<!-- Tab Contents -->
+	<div class="tab-content active" id="generate">
+		<form method="POST">
+			<label for="prompt"><strong>Enter your prompt:</strong></label>
+			<textarea name="prompt" rows="3" required placeholder="Generate two algebra question and answer and explnation">{{ prompt or '' }}</textarea>
+			<button type="submit">Generate Question</button>
+		</form>
+
+		{% if question %}
+		<h3>Generated Question</h3>
+		<pre>{{ question }}</pre>
+
+		<h3>Evaluation Metrics</h3>
+		<ul>
+			<li><strong>Structure Valid:</strong> {{ evaluation.structure_valid }}</li>
+			<li><strong>Readability Score:</strong> {{ evaluation.readability_score }}</li>
+			<li><strong>Estimated Grade Level:</strong> {{ evaluation.estimated_grade_level }}</li>
+		</ul>
+		{% endif %}
+
+		{% if error %}
+		<div style="color: red;"><strong>Error:</strong> {{ error }}</div>
+		{% endif %}
+	</div>
+
+	<div class="tab-content" id="overview">
+		<h3>Project Overview</h3>
+		<p>This web application is designed to automatically generate SHSAT-style multiple-choice questions using a fine-tuned GPT-3.5 Turbo model. It provides high-quality, grade-appropriate content for students and educators. The project includes:</p>
+		<ul>
+			<li>Structured question generation (MCQ format)</li>
+			<li>Support for subjects like Math, English, Vocabulary, and Reading Comprehension</li>
+			<li>Evaluation of readability and complexity</li>
+			<li>Clear question + answer + explanation format</li>
+		</ul>
+		<p><strong>Dataset and Training</strong></p>
+		<p>The fine-tuned GPT-3.5 Turbo model is trained using a custom dataset designed specifically for this project. The dataset includes SHSAT-style multiple-choice questions for subjects such as Math correct answers and explanations for each question. The training data is structured in a JSONL (JSON Lines) format where each line contains a prompt (question) and a completion (answer), along with optional explanations. The model was fine-tuned on this dataset to adapt to the SHSAT format, ensuring high-quality question generation with proper complexity and accuracy.</p>
+	</div>
+
+	<div class="tab-content" id="model">
+        <h3>About the Model</h3>
+        <p>The fine-tuned GPT-3.5 Turbo model was trained using a custom dataset of SHSAT-style multiple-choice questions. Each training example followed OpenAI’s JSONL format with a conversational structure. The model learned to generate:</p>
+        <ul>
+            <li>Proper MCQ structure with question + answer choices</li>
+            <li>Correct answer selection</li>
+            <li>Optional explanation for answers</li>
+            <li>Subject-specific formatting (Math, English, etc.)</li>
+        </ul>
+    
+        <h4>Training Format</h4>
+        <p>Each example in the training dataset followed OpenAI’s <code>messages</code> format within JSONL files. Here's a sample entry:</p>
+        <pre>
+    {
+      "messages": [
+        { "role": "system", "content": "You are an expert SHSAT math tutor." },
+        { "role": "user", "content": "7 audio cassettes and 3 video cassettes cost rs 1110 , while 5 audio cassettes and 4 video cassettes cost rs 1350 . Find the cost of an audio cassette and a video cassette ." },
+        { "role": "assistant", "content": "Equations: (7.0×audio)+(3.0×video)=1110.0, (5.0×audio)+(4.0×video)=1350.0. Solution: 30.0, 300.0" }
+      ]
+    }
+        </pre>
+    
+        <p>This format helps the model maintain a clear conversational context and deliver structured, accurate outputs for SHSAT-style questions.</p>
+    </div>
+    
+
+	<div class="tab-content" id="sample">
+        <h3>Sample Input & Usage Guide</h3>
+        <p>For every input, please include a command like <strong>"Generate"</strong>, <strong>"Make"</strong>, or <strong>"Give me"</strong> followed by your request. If you want the answer, please use the key phrase:</p>
+        <ul>
+            <li><strong>"Give me answer"</strong></li>
+        </ul>
+        <p>If you want an explanation, please mention the key:</p>
+        <ul>
+            <li><strong>"Explanation"</strong></li>
+        </ul>
+        <p>Here are some example prompts for generating questions:</p>
+        <ul>
+            <li><code>Generate a Grade 6 Math word problem</code></li>
+            <li><code>Create a reading comprehension passage with 1 question</code></li>
+            <li><code>Give me a Grade 7 English vocabulary question</code></li>
+        </ul>
+        <p>For each prompt, the following information will be provided:</p>
+        <ul>
+            <li><strong>Clear question statement</strong></li>
+            <li><strong>Multiple choices (A, B, C, D)</strong></li>
+            <li><strong>Correct answer</strong></li>
+            <li><strong>Explanation</strong></li>
+        </ul>
+    </div>
+
+	<div class="tab-content" id="how">
+		<h3>How It Works</h3>
+		<ul>
+			<li>User provides a prompt (topic, grade level, subject)</li>
+			<li>The Flask app sends the prompt to OpenAI’s fine-tuned model</li>
+			<li>The model returns a structured MCQ with options</li>
+			<li>The response is analyzed and shown with evaluation metrics</li>
+		</ul>
+	</div>
+
+	<div class="tab-content" id="future">
+		<h3>Future Scope</h3>
+		<ul>
+			<li>User feedback system</li>
+			<li>Save/export questions</li>
+			<li>Deploy on Azure with user auth</li>
+			<li>Add subjects: Science, Social Studies</li>
+			<li>Improve explanations using external datasets</li>
+		</ul>
+	</div>
+
+	<div class="tab-content" id="limitations">
+		<h3>Limitations</h3>
+		<p>While this tool provides a valuable way to generate SHSAT-style questions, it does have some limitations:</p>
+		<ul>
+			<li><strong>Quality of Generated Questions:</strong> May not always be perfectly structured.</li>
+			<li><strong>Subject Limitations:</strong> Advanced topics may lack coverage.</li>
+			<li><strong>Contextual Understanding:</strong> May generate ambiguous content.</li>
+			<li><strong>Dependence on Training Data:</strong> Limited by data quality.</li>
+			<li><strong>No Adaptive Learning:</strong> Doesn't learn user behavior yet.</li>
+		</ul>
+	</div>
+
+	<!-- Developer Tab Moved to End -->
+	<div class="tab-content" id="developer">
+		<h3>About the Developer</h3>
+		<p><strong>Mir Hasibul Hasan Rahat</strong></p>
+	
+            <a href="https://www.linkedin.com/in/mir-rahat-2b2108147" target="_blank">LinkedIn</a>
+            <a href="https://github.com/mirrahat" target="_blank">GitHub</a>
+     
+          
+		<p>I'm a data-driven developer with a strong passion for Data Science, focusing on machine learning, predictive analytics, and insightful data storytelling. I enjoy solving real-world problems using data and have hands-on experience with model building and evaluation.
+
+            Beyond data, I’ve built scalable backend systems using ASP.NET Core and created dynamic, user-friendly interfaces with React. My goal is to blend data science with full-stack development to deliver smart, end-to-end solutions.</p>
+	</div>
+
+	<!-- Footer -->
+	<div class="footer">
+		© 2025 Mir Hasibul Hasan Rahat • All rights reserved
+	</div>
+
+	<!-- JavaScript for Tabs -->
+	<script>
+		function showTab(evt, tabId) {
+			const tabContents = document.querySelectorAll('.tab-content');
+			const tabButtons = document.querySelectorAll('.tab-button');
+
+			tabContents.forEach(tab => tab.classList.remove('active'));
+			tabButtons.forEach(btn => btn.classList.remove('active'));
+
+			document.getElementById(tabId).classList.add('active');
+			evt.currentTarget.classList.add('active');
+		}
+	</script>
+</body>
+</html>
